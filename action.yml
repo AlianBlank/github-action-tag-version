@@ -3,17 +3,13 @@ description: "Auto tag your commit."
 author: "alianblank"
 inputs:
   version:
-    description: "The tag version"
+    description: "tag 版本号"
     required: true
     default: "1.0.0"
-  branch_name:
-    description: "branch name"
-    required: true
-    default: "main"
   commit:
     description: "修改版本号提交日志"
     required: false
-    default: "[修改] 修改版本号"
+    default: "[修改] 修改版本号为"
 runs:
   using: "node20"
   main: "index.js"

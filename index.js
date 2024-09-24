@@ -16,10 +16,9 @@ async function main() {
 
     // 获取当前版本号
     const currentVersion = packageJson.version
-    core.setOutput("currentVersion", currentVersion);
     // 自增修订版本号
     const versionParts = Version.split('.')
-    versionParts[2] = parseInt(versionParts[2], 10) + 1
+    versionParts[2] = parseInt(versionParts[2], 10) // 这里不要+1. 因为这里是使用tag来做版本号的
 
     // 更新package.json文件中的版本号
     packageJson.version = versionParts.join('.')
@@ -31,10 +30,6 @@ async function main() {
     await exec(`git add package.json`);
     // 提交修改
     await exec(`git commit -m '${CommitMessage}'`);
-    // 推送
-    await exec(`git push origin ${branch_name}`);
-
-    core.setOutput("newTag", Version);
 }
 
 main().catch(error => core.setFailed(error.message));
