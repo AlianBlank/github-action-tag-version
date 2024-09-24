@@ -29,7 +29,7 @@ async function main() {
     // 将package.json文件添加到暂存区
     await exec(`git add package.json`);
     // 提交修改
-    await exec(`git commit -m ${CommitMessage}`);
+    await exec(`git commit -m '${CommitMessage}'`);
 
     core.setOutput("newTag", Version);
 }
