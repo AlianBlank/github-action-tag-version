@@ -10,12 +10,15 @@
   "keywords": [],
   "author": "",
   "license": "GPL V3",
+  "engines": {
+    "node": ">=20"
+  },
   "bugs": {
     "url": "https://github.com/VegetableGarden/beet/issues"
   },
   "homepage": "https://github.com/VegetableGarden/beet",
   "dependencies": {
-    "@actions/core": "^1.2.6",
-    "@actions/github": "^2.1.1"
+    "@actions/core": "^1.10.1",
+    "@actions/exec": "^1.1.1"
   }
 }
