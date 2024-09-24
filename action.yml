@@ -1,20 +1,17 @@
-name: 'Auto Tagger'
+name: 'change-version-by-tag'
 description: 'Auto tag your commit.'
-author: "qianfeiqianlan"
+author: "alianblank"
 inputs:
-  major-version:
-    description: 'The tag major version'
+  version:
+    description: 'The tag version'
+    required: true
+    default: '1.0.0'
+  commit:
+    description: '修改版本号提交日志'
     required: false
-    default: '0'
-  minor-version:
-    description: 'The tag minor version'
-    required: false
-    default: '0'
-outputs:
-  newTag:
-    description: 'The new generated tag'
+    default: '[修改] 修改版本号'
 runs:
-  using: 'node12'
+  using: 'node20'
   main: 'index.js'
 branding:
   icon: "tag"

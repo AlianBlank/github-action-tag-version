@@ -1,35 +1,41 @@
 const util = require("util");
 const exec = util.promisify(require("child_process").exec);
 const core = require("@actions/core");
+const fs = require('fs')
+
 
 async function main() {
-    const majorVersion = core.getInput("major-version") || 0;
-    const minorVersion = core.getInput("minor-version") || 0;
-
-    const validTag = /^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/;
+    const Version = core.getInput("version") || '1.0.0';
+    const CommitMessage = core.getInput("commit") || ('[修改] 修改版本号为' + Version);
 
     await exec("git fetch --all --tags");
 
-    const {stdout} = await exec("git tag");
+    const { stdout } = await exec("git tag");
 
-    const maxVersion = stdout.split(/[\r\n]+/g).filter((it) => {
-        return it.match(validTag);
-    }).map((it) => {
-        const [major,minor,patch] = it.split('.');
-        return Number(major) * 1000000 * + Number(minor) * 1000 + Number(patch);
-    }).reduce((maxVersion, currentVersion) => (currentVersion > maxVersion ? currentVersion : maxVersion), 0);
+    const packageJsonPath = './package.json'
 
-    const defaultVersion = (majorVersion + minorVersion) === 0 ? 1 :(majorVersion * 1000000 + minorVersion * 1000);
+    // 读取package.json文件
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath))
 
-    const targetVersion = defaultVersion > maxVersion ? defaultVersion : maxVersion + 1;
+    // 获取当前版本号
+    const currentVersion = packageJson.version
+    core.setOutput("currentVersion", currentVersion);
+    // 自增修订版本号
+    const versionParts = Version.split('.')
+    versionParts[2] = parseInt(versionParts[2], 10) + 1
 
-    const targetTag = `${Math.floor(targetVersion/1000000)}.${Math.floor(targetVersion/1000)%1000}.${targetVersion%1000}`
+    // 更新package.json文件中的版本号
+    packageJson.version = versionParts.join('.')
 
-    await exec(`git tag ${targetTag}`);
+    // 将更新后的package.json文件写入磁盘
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))
 
-    await exec(`git push origin ${targetTag}`);
+    // 将package.json文件添加到暂存区
+    await exec(`git add package.json`);
+    // 提交修改
+    await exec(`git commit -m ${CommitMessage}`);
 
-    core.setOutput("newTag", targetTag);
+    core.setOutput("newTag", Version);
 }
 
 main().catch(error => core.setFailed(error.message));
