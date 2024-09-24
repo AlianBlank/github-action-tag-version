@@ -8,10 +8,6 @@ async function main() {
     const Version = core.getInput("version") || '1.0.0';
     const CommitMessage = core.getInput("commit") || ('[修改] 修改版本号为' + Version);
 
-    await exec("git fetch --all --tags");
-
-    const { stdout } = await exec("git tag");
-
     const packageJsonPath = './package.json'
 
     // 读取package.json文件
